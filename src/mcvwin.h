@@ -32,7 +32,7 @@ protected:
 
     Gtk::ToolButton           *p_button01;
     Gtk::ToolButton           *p_button03;
-    Gtk::ToolButton           *p_button04;
+    //Gtk::ToolButton           *p_button04;
     //Gtk::ToggleToolButton   *p_toggle_button05;
     //Gtk::ToggleToolButton     *p_toggle_property;
     Gtk::ToolButton           *p_button_quit;

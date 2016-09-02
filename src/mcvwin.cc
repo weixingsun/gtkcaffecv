@@ -12,8 +12,8 @@ McvWin::McvWin(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refBui
     p_button03 = nullptr;
     m_refBuilder->get_widget("toolbutton3", p_button03);
 
-    p_button04 = nullptr;
-    m_refBuilder->get_widget("toolbutton4", p_button04);
+    //p_button04 = nullptr;
+    //m_refBuilder->get_widget("toolbutton4", p_button04);
 
     p_button_quit = nullptr;
     m_refBuilder->get_widget("toolbutton6", p_button_quit);
@@ -50,12 +50,6 @@ McvWin::McvWin(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refBui
         p_button03->signal_clicked().connect( sigc::mem_fun(*this, &McvWin::on_button03_clicked) );
     }
 
-    if(p_button04)
-    {
-        p_button04->signal_clicked().connect( sigc::mem_fun(*this, &McvWin::on_button04_clicked) );
-    }
-
-
     if(p_button_quit)
     {
         p_button_quit->signal_clicked().connect( sigc::mem_fun(*this, &McvWin::on_button_exit) );
@@ -79,6 +73,8 @@ McvWin::McvWin(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refBui
     mptr_caffe->signal_connect(this);
 
     caffe_ready = true;
+
+    m_ref_textbuf01 = Gtk::TextBuffer::create();
 }
 
 McvWin::~McvWin()
@@ -96,6 +92,12 @@ void McvWin::on_show()
     ApplicationWindow::on_show();
 
     show_all();
+
+    std::string  str_show = "Please draw a rectangle Region Of Interest in image, click run toolbutton.";
+ 
+    m_ref_textbuf01->set_text(str_show);
+
+    p_text01->set_buffer(m_ref_textbuf01);
 
     std::cout << "McvWin on_show" << std::endl;
 }
@@ -164,9 +166,7 @@ void McvWin::on_button03_clicked()
 
     p_draw->get_info_roi(x, y, w, h);
 
-    std::string  str_show = "";
-
-    m_ref_textbuf01 = Gtk::TextBuffer::create();
+    std::string  str_show = "Please draw a rectangle Region Of Interest in image, click run toolbutton.";
  
     m_ref_textbuf01->set_text(str_show);
 
@@ -230,8 +230,6 @@ void McvWin::on_classifier_signal(Classifier  *p_class)
     p_class->get_str_class(str_class);
 
     std::cout << str_class << std::endl;
-
-    m_ref_textbuf01 = Gtk::TextBuffer::create();
  
     m_ref_textbuf01->set_text(str_class);
 

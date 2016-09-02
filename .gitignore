@@ -1,0 +1,11 @@
+## General
+
+# Editor temporaries
+*.swp
+*~
+cscope.*
+
+# mingw
+mingw/*
+
+
