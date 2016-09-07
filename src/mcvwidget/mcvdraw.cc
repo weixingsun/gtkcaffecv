@@ -62,24 +62,7 @@ void  McvDraw::mcv_img_zoom(Mat  &image, Mat  &image_zoom, int  zwh)
 
 bool McvDraw::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
-    /*
-    Cairo::RefPtr<Cairo::Context> cr_01 = this->get_window()->create_cairo_context();
-    cr_01->set_source_rgb(0.0, 0.0, 0.8);
-    cr_01->rectangle(80, 80, 32, 32);
-    cr_01->fill();
-    cr_01->stroke();
-    return true;
-    */
-
     if (!m_pixbuf) return false;
-
-    //Gtk::Allocation allocation = get_allocation();
-    //const int width = allocation.get_width();
-    //const int height = allocation.get_height();
-
-    // Draw the image in the middle of the drawing area, or (if the image is
-    // larger than the drawing area) draw the middle part of the image.
-    //Gdk::Cairo::set_source_pixbuf(cr, m_pixbuf, (width - m_pixbuf->get_width())/2, (height - m_pixbuf->get_height())/2);
 
     Gdk::Cairo::set_source_pixbuf(cr, m_pixbuf, 0, 0);
     cr->paint();
@@ -106,7 +89,6 @@ void  McvDraw::load_img(std::string  &str_img_fn)
         std::cout <<  "Could not open or find the image" << std::endl;
     }
 
-
     m_pixbuf = Gdk::Pixbuf::create_from_data(
                    (guint8*)m_img_show.data,
                    Gdk::COLORSPACE_RGB,
@@ -115,12 +97,6 @@ void  McvDraw::load_img(std::string  &str_img_fn)
                    m_img_show.cols,
                    m_img_show.rows,
                    m_img_show.step);
-
-    //m_width = m_pixbuf->get_width();
-    //m_height = m_pixbuf->get_height();
-
-    //Gdk::Cairo::set_source_pixbuf(m_cr, m_pixbuf, 0, 0);
-    //m_cr->paint();
 
     m_roi_x = 0;
     m_roi_y = 0;
@@ -198,42 +174,9 @@ void  McvDraw::on_show()
     std::cout << "McvDraw on_show" << std::endl;
 }
 
-/*
 bool  McvDraw::on_button_press_event(GdkEventButton* button_event)
 {
     std::cout << "McvDraw button_press : " << button_event->x << "  " << button_event->y << std::endl;
-
-    int  x = button_event->x;
-    int  y = button_event->y;
-
-    Gdk::Rectangle update_rect(x - 3, y - 3, 6, 6);
-
-    //Gdk::Cairo::set_source_pixbuf(m_cr, m_pixbuf, 0, 0);
-
-    Cairo::RefPtr<Cairo::Context> m_cr = this->get_window()->create_cairo_context();
-
-    m_cr->paint();
-
-    m_cr->set_source_rgb(0.0, 0.0, 0.8);
-
-    m_cr->rectangle(x, y, 12, 12);
-
-    m_cr->fill();
-
-    m_cr->stroke();
-
-    m_cr->paint();
-
-    return  true;
-}
-*/
-
-bool  McvDraw::on_button_press_event(GdkEventButton* button_event)
-{
-    std::cout << "McvDraw button_press : " << button_event->x << "  " << button_event->y << std::endl;
-
-    //int  x = button_event->x;
-    //int  y = button_event->y;
 
     m_roi_x = button_event->x;
     m_roi_y = button_event->y;
@@ -250,9 +193,6 @@ bool  McvDraw::on_motion_notify_event(GdkEventMotion* motion_event)
 
     if (m_drawing == false) return true;
 
-    //int  x = motion_event->x;
-    //int  y = motion_event->y;
-
     m_roi_w = motion_event->x - m_roi_x;
     m_roi_h = motion_event->y - m_roi_y;
 
@@ -268,25 +208,6 @@ bool  McvDraw::on_motion_notify_event(GdkEventMotion* motion_event)
         //this->show();
     }
 
-    /*
-    Gdk::Cairo::set_source_pixbuf(m_cr, m_pixbuf, 0, 0);
-    m_cr->paint();
-
-    m_cr->set_source_rgb(0.8, 0.8, 0.0);
-
-    m_cr->rectangle(m_roi_x, m_roi_y, m_roi_w, m_roi_h);
-
-    m_cr->fill();
-
-    m_cr->stroke();
-
-    Glib::RefPtr<Gdk::Pixbuf>     pixbuf = Gdk::Pixbuf::create(m_surface, 0, 0, m_width, m_height);
-
-    Cairo::RefPtr<Cairo::Context> cr = this->get_window()->create_cairo_context();
-    Gdk::Cairo::set_source_pixbuf(cr, pixbuf, 0, 0);
-    cr->paint();
-    */
-
     return  true;
 }
 
@@ -295,9 +216,6 @@ bool  McvDraw::on_button_release_event(GdkEventButton* release_event)
     std::cout << "McvDraw  button_release : " << release_event->x << "  " << release_event->y << std::endl;
 
     if (release_event->x<0 || release_event->y<0) return true;
-
-    //int  x = release_event->x;
-    //int  y = release_event->y;
 
     m_roi_w = release_event->x - m_roi_x;
     m_roi_h = release_event->y - m_roi_y;

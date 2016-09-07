@@ -180,9 +180,6 @@ void McvWin::on_button03_clicked()
     //Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
 
     Glib::RefPtr<Gdk::Pixbuf>   pix_buf = Gdk::Pixbuf::create(surface, 0, 0, w, h);
-    //Glib::RefPtr<Gdk::Pixbuf>   pix_buf = Gdk::Pixbuf::create(surface, 0, 0, 600, 400);
-
-    //Glib::RefPtr<Gdk::Pixbuf>   pix_buf;
 
     p_draw->get_img_roi(pix_buf);
 
@@ -193,21 +190,11 @@ void McvWin::on_button03_clicked()
     //imwrite("pix_buf.jpg", img_buf);
     //pix_buf->save("pix_buf.png", "png");
 
-    //double time_b = (double)getTickCount();
-    //double time_e = (double)getTickCount();
-    //double time_nn = (time_e - time_b)/getTickFrequency()*1000.0;
-
     mptr_caffe->load_image(img_buf);
-
-    //std::unique_ptr<std::thread>   ptr_thread(new std::thread(&Classifier::fun, p_caffe));
-
-    //mptr_thread=std::move(ptr_thread);
 
     if (caffe_ready) { mptr_thread.reset(new std::thread(&Classifier::fun, &(*mptr_caffe))); }
 
     caffe_ready = false;
-
-    //std::cout << "Caffe time : " << time_nn << " ms" << std::endl;
 }
 
 void McvWin::on_button04_clicked()

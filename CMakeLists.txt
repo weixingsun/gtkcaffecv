@@ -2,8 +2,15 @@ cmake_minimum_required(VERSION 3.0)
 
 project(gtkcaffecv)
 
-# SET(CMAKE_CXX_COMPILER_ENV_VAR "g++")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -DCPU_ONLY -D_USE_MATH_DEFINES")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -D_USE_MATH_DEFINES")
+
+option(USE_OPENCL "Build gtkcaffecv with OpenCL support" OFF) 
+
+if("${USE_OPENCL}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_OPENCL")
+else()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCPU_ONLY")
+endif()
 
 # ---[ Configuration types
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "Possible configurations" FORCE)
@@ -19,6 +26,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "")
 endif()
 
 MESSAGE(STATUS "This is SOURCE dir " ${CMAKE_SOURCE_DIR})
+MESSAGE(STATUS "CMAKE_CXX_FLAGS :  " ${CMAKE_CXX_FLAGS})
 MESSAGE(STATUS "CMAKE_BUILD_TYPE : " ${CMAKE_BUILD_TYPE})
 
 SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CMAKE_CXX_FLAGS} -O0 -Wall -g -ggdb")

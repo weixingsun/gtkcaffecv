@@ -1,14 +1,17 @@
 #include <gtkmm.h>
 #include <iostream>
+#include <glog/logging.h>
 
 #include "mcvwin.h"
 
 int main(int argc, char** argv)
 {
-    auto app = Gtk::Application::create(argc, argv, "org.gtkmm.draw");
-    //auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
+    // Initialize Google's logging library.
+    //google::InitGoogleLogging(argv[0]);
+    //FLAGS_log_dir = "./log";
+    //LOG(INFO) << "argv[0]";
 
-    //Gtk::Main kit(argc, argv);
+    auto app = Gtk::Application::create(argc, argv, "org.gtkmm.draw");
 
     //Load the GtkBuilder file and instantiate its widgets:
     auto refBuilder = Gtk::Builder::create();
