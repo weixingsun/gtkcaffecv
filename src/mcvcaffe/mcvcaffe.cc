@@ -7,29 +7,48 @@
 
 #if defined  _OPENCL 
 // Get all available GPU devices
-static void get_gpus(vector<int>* gpus) {
-    int count = 0;
+void get_gpus(vector<int> &gpus) {
+    int device_count = 0;
 
-    count = Caffe::EnumerateDevices(true);
+    typedef std::vector<viennacl::ocl::platform> platforms_type;
+    platforms_type const &platforms = viennacl::ocl::get_platforms();
+      
+    for (int platform_id = 0; platform_id < platforms.size(); ++platform_id) {
+        typedef std::vector<viennacl::ocl::device> devices_type;
+        devices_type const &devices = platforms[platform_id].devices();
 
-    for (int i = 0; i < count; ++i) {
-      gpus->push_back(i);
+        for (int device_id = 0; device_id < devices.size(); ++device_id) {
+            if (devices[device_id].type() == CL_DEVICE_TYPE_GPU) {
+            //if (devices[device_id].type() == CL_DEVICE_TYPE_CPU) {
+                gpus.push_back(device_count); goto FINDGPU;
+            }
+            device_count++;
+        }
+    }
+FINDGPU:    
+    //device_count = Caffe::EnumerateDevices(true);
+
+    for (int n=0; n<gpus.size(); n++) {
+        std::cout << "devices : " << gpus[n] << std::endl; 
     }
 }
-#endif 
+#endif
 
 Classifier::Classifier(const string& model_file,
                        const string& trained_file,
                        const string& mean_file,
-                       const string& label_file) {
-    
+                       const string& label_file)
+{
 #if defined  _OPENCL 
   // Set device id and mode
+    
   vector<int> gpus;
-  get_gpus(&gpus);
+  gpus.clear();
+  get_gpus(gpus);
+
   if (gpus.size() != 0) {
     std::cout << "Use GPU with device ID " << gpus[0] << std::endl;
-    Caffe::SetDevices(gpus);
+    //Caffe::SetDevices(gpus);
     Caffe::set_mode(Caffe::GPU);
     Caffe::SetDevice(gpus[0]);
   }
@@ -37,11 +56,13 @@ Classifier::Classifier(const string& model_file,
   std::cout << "Use CPU" << std::endl;
   Caffe::set_mode(Caffe::CPU);
 #endif
-  
+
   /* Load the network. */
 #if defined  _OPENCL 
-  net_.reset(new Net<float>(model_file, TEST, Caffe::GetDefaultDevice()));
+  //net_.reset(new Net<float>(model_file, TEST, Caffe::GetDefaultDevice()));
+  net_.reset(new Net<float>(model_file, TEST, Caffe::GetDevice(0, true)));
 #else
+  //net_.reset(new Net<float>(model_file, TEST, Caffe::GetCPUDevice()));
   net_.reset(new Net<float>(model_file, TEST));
 #endif
   
@@ -240,7 +261,7 @@ void  Classifier::fun()
 
     double time_b = (double)getTickCount();
 
-    m_predictions = Classify(m_img);
+    m_predictions = this->Classify(m_img);
 
     double time_e = (double)getTickCount();
     double time_nn = (time_e - time_b)/getTickFrequency()*1000.0;

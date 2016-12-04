@@ -1,5 +1,13 @@
 #include "mcvwin.h"
 
+#include "CL/cl.h"
+#include "viennacl/backend/opencl.hpp"
+#include "viennacl/ocl/backend.hpp"
+#include "viennacl/ocl/context.hpp"
+#include "viennacl/ocl/device.hpp"
+#include "viennacl/ocl/platform.hpp"
+#include "viennacl/vector.hpp"
+
 using namespace cv;
 
 McvWin::McvWin(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refBuilder)
@@ -56,6 +64,7 @@ McvWin::McvWin(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refBui
     }
 
     //p_edit01 = new Gtk::Entry();
+    m_ref_textbuf01 = Gtk::TextBuffer::create();
 
     //std::string  model_file   = "../data/deploy.prototxt";
     //std::string  trained_file = "../data/bvlc_reference_caffenet.caffemodel";
@@ -67,14 +76,11 @@ McvWin::McvWin(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refBui
     std::string  mean_file    = "../data/imagenet_mean.binaryproto";
     std::string  label_file   = "../data/synset_words.txt";
 
-
     mptr_caffe.reset(new Classifier(model_file, trained_file, mean_file, label_file));
 
     mptr_caffe->signal_connect(this);
 
     caffe_ready = true;
-
-    m_ref_textbuf01 = Gtk::TextBuffer::create();
 }
 
 McvWin::~McvWin()

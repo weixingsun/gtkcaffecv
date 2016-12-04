@@ -6,10 +6,10 @@
 
 int main(int argc, char** argv)
 {
-    // Initialize Google's logging library.
+    //Initialize Google's logging library.
     //google::InitGoogleLogging(argv[0]);
     //FLAGS_log_dir = "./log";
-    //LOG(INFO) << "argv[0]";
+    //LOG(INFO) << argv[0];
 
     auto app = Gtk::Application::create(argc, argv, "org.gtkmm.draw");
 

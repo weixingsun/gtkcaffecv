@@ -2,12 +2,15 @@ cmake_minimum_required(VERSION 3.0)
 
 project(gtkcaffecv)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -D_USE_MATH_DEFINES")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpermissive -D_MINGW -D_USE_MATH_DEFINES")
 
-option(USE_OPENCL "Build gtkcaffecv with OpenCL support" OFF) 
+# ---[ Using cmake scripts and modules
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
+option(USE_OPENCL "Build gtkcaffecv with OpenCL support" ON) 
 
 if("${USE_OPENCL}")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_OPENCL")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_OPENCL -DUSE_GREENTEA")
 else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCPU_ONLY")
 endif()
@@ -55,10 +58,20 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 link_directories(${OpenCV_LIBRARY_DIRS})
 list(APPEND Gtkcaffecv_LINKER_LIBS ${OpenCV_LIBRARIES})
 
+# find OpenCL
+find_package(OpenCL REQUIRED)
+include_directories(SYSTEM ${OPENCL_INCLUDE_DIRS})
+list(APPEND Gtkcaffecv_LINKER_LIBS ${OPENCL_LIBRARIES})
+
 find_package(Caffe REQUIRED)
 include_directories(${Caffe_INCLUDE_DIRS})
 link_directories(${Caffe_LIBRARY_DIRS})
 list(APPEND Gtkcaffecv_LINKER_LIBS ${Caffe_LIBRARIES})
+
+INCLUDE_DIRECTORIES("/mingw/include")
+#INCLUDE_DIRECTORIES("/mingw64/include/OpenBLAS/")
+INCLUDE_DIRECTORIES("C:/msys64/mingw64/include/OpenBLAS")
+#LINK_DIRECTORIES("/mingw/lib") 
 
 file(GLOB_RECURSE  mcvcaffe_source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/mcvcaffe/*.cc")
 ADD_LIBRARY(mcvcaffe ${mcvcaffe_source_files} )
@@ -67,9 +80,6 @@ file(GLOB_RECURSE mcvwidget_source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/mcvwid
 ADD_LIBRARY(mcvwidget ${mcvwidget_source_files} )
 
 MESSAGE(STATUS "Gtkcaffecv_LINKER_LIBS : " ${Gtkcaffecv_LINKER_LIBS})
-
-INCLUDE_DIRECTORIES("/mingw/include")
-LINK_DIRECTORIES("/mingw/lib") 
 
 file(GLOB_RECURSE source_files "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc")
 add_executable(gtkcaffecv ${source_files})
