@@ -1,13 +1,5 @@
 #include "mcvwin.h"
 
-#include "CL/cl.h"
-#include "viennacl/backend/opencl.hpp"
-#include "viennacl/ocl/backend.hpp"
-#include "viennacl/ocl/context.hpp"
-#include "viennacl/ocl/device.hpp"
-#include "viennacl/ocl/platform.hpp"
-#include "viennacl/vector.hpp"
-
 using namespace cv;
 
 McvWin::McvWin(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refBuilder)
