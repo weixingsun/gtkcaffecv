@@ -11,11 +11,11 @@ void get_gpus(vector<int> &gpus) {
     int device_count = 0;
 
     typedef std::vector<viennacl::ocl::platform> platforms_type;
-    platforms_type const &platforms = viennacl::ocl::get_platforms();
+    platforms_type  platforms = viennacl::ocl::get_platforms();
       
     for (int platform_id = 0; platform_id < platforms.size(); ++platform_id) {
         typedef std::vector<viennacl::ocl::device> devices_type;
-        devices_type const &devices = platforms[platform_id].devices();
+        devices_type  devices = platforms[platform_id].devices();
 
         for (int device_id = 0; device_id < devices.size(); ++device_id) {
             if (devices[device_id].type() == CL_DEVICE_TYPE_GPU) {
@@ -58,13 +58,9 @@ Classifier::Classifier(const string& model_file,
 #endif
 
   /* Load the network. */
-#if defined  _OPENCL 
-  //net_.reset(new Net<float>(model_file, TEST, Caffe::GetDefaultDevice()));
-  net_.reset(new Net<float>(model_file, TEST, Caffe::GetDevice(0, true)));
-#else
-  //net_.reset(new Net<float>(model_file, TEST, Caffe::GetCPUDevice()));
-  net_.reset(new Net<float>(model_file, TEST));
-#endif
+  std::cout << "Caffe::GetDefaultDevice : " << Caffe::GetDefaultDevice()->name() << std::endl;
+  net_.reset(new Net<float>(model_file, TEST, Caffe::GetDefaultDevice()));
+  //net_.reset(new Net<float>(model_file, TEST, Caffe::GetDevice(0, true)));
   
   net_->CopyTrainedLayersFrom(trained_file);
 
@@ -167,12 +163,8 @@ std::vector<float> Classifier::Predict(const cv::Mat& img) {
   WrapInputLayer(&input_channels);
 
   Preprocess(img, &input_channels);
-  
-#if defined  _OPENCL 
+
   net_->Forward();
-#else 
-  net_->ForwardPrefilled();
-#endif
 
   /* Copy the output layer to a std::vector */
   Blob<float>* output_layer = net_->output_blobs()[0];

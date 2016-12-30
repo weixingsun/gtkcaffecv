@@ -16,11 +16,6 @@
 #include <mutex>
 #include <condition_variable>
 
-#ifdef CPU_ONLY
-#define  int_tp   int
-#define  uint_tp  uint
-#endif
-
 using namespace caffe;  // NOLINT(build/namespaces)
 using std::string;
 
