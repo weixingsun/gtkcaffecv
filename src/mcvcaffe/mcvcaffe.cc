@@ -5,35 +5,6 @@
 #include "mcvcaffe.h"
 #include "mcvwin.h"
 
-#if defined  _OPENCL 
-// Get all available GPU devices
-void get_gpus(vector<int> &gpus) {
-    int device_count = 0;
-
-    typedef std::vector<viennacl::ocl::platform> platforms_type;
-    platforms_type  platforms = viennacl::ocl::get_platforms();
-      
-    for (int platform_id = 0; platform_id < platforms.size(); ++platform_id) {
-        typedef std::vector<viennacl::ocl::device> devices_type;
-        devices_type  devices = platforms[platform_id].devices();
-
-        for (int device_id = 0; device_id < devices.size(); ++device_id) {
-            if (devices[device_id].type() == CL_DEVICE_TYPE_GPU) {
-            //if (devices[device_id].type() == CL_DEVICE_TYPE_CPU) {
-                gpus.push_back(device_count); goto FINDGPU;
-            }
-            device_count++;
-        }
-    }
-FINDGPU:    
-    //device_count = Caffe::EnumerateDevices(true);
-
-    for (int n=0; n<gpus.size(); n++) {
-        std::cout << "devices : " << gpus[n] << std::endl; 
-    }
-}
-#endif
-
 Classifier::Classifier(const string& model_file,
                        const string& trained_file,
                        const string& mean_file,
@@ -41,17 +12,9 @@ Classifier::Classifier(const string& model_file,
 {
 #if defined  _OPENCL 
   // Set device id and mode
-    
-  vector<int> gpus;
-  gpus.clear();
-  get_gpus(gpus);
-
-  if (gpus.size() != 0) {
-    std::cout << "Use GPU with device ID " << gpus[0] << std::endl;
-    //Caffe::SetDevices(gpus);
-    Caffe::set_mode(Caffe::GPU);
-    Caffe::SetDevice(gpus[0]);
-  }
+  std::cout << "Use GPU" << std::endl;
+  Caffe::set_mode(Caffe::GPU);
+  Caffe::SetDevice(0);
 #else 
   std::cout << "Use CPU" << std::endl;
   Caffe::set_mode(Caffe::CPU);
@@ -60,7 +23,6 @@ Classifier::Classifier(const string& model_file,
   /* Load the network. */
   std::cout << "Caffe::GetDefaultDevice : " << Caffe::GetDefaultDevice()->name() << std::endl;
   net_.reset(new Net<float>(model_file, TEST, Caffe::GetDefaultDevice()));
-  //net_.reset(new Net<float>(model_file, TEST, Caffe::GetDevice(0, true)));
   
   net_->CopyTrainedLayersFrom(trained_file);
 
